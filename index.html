@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>musta</title>
+
+
+  <script type="text/javascript" src="mustache.min-2.3.0.js"></script>
+  <style type="text/css">
+    body {
+      margin-top: 5em;
+      padding: 1em 4em;
+      text-align: center;
+    }
+
+    * {
+      font-family: 'PT Serif', Marion, 'Iowan Old Style', 'Hoefler Text', 'Charter', Baskerville, 'Athelas', '.New York', Palatino, Georgia, ".AppleSystemUIFont", Helvetica, Arial;
+      line-height: 1.6;
+    }
+
+    .ipa {
+      font-family: Symbol;
+      font-size: 13pt;
+    }
+
+    .container {
+      margin: 0 auto;
+      width: 83%;
+      max-width: 650px;
+      text-align: left;
+      padding: 0 10px 20px;
+    }
+
+    /*
+    input[type=submit] {
+      border: 1px dotted lightgray;
+      margin: 1em;
+      padding: 0.4em;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+    }
+    */
+
+    .btn {
+      border: 0;
+      margin: 0 1em;
+      padding: 0.1em 0.4em;
+      background-image: -webkit-linear-gradient(top, #e2e1e1, #cfcfcf);
+      background-image: -moz-linear-gradient(top, #e2e1e1, #cfcfcf);
+      background-image: -ms-linear-gradient(top, #e2e1e1, #cfcfcf);
+      background-image: -o-linear-gradient(top, #e2e1e1, #cfcfcf);
+      background-image: linear-gradient(to bottom, #e2e1e1, #cfcfcf);
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+      -webkit-box-shadow: 2px 2px 3px #cecece;
+      -moz-box-shadow: 2px 2px 3px #cecece;
+      box-shadow: 2px 2px 3px #cecece;
+      font-family: Arial;
+      color: #ffffff;
+      font-size: 20px;
+      background: #e2e1e1;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: #f3f3f3;
+      background-image: -webkit-linear-gradient(top, #f3f3f3, #e2e1e1);
+      background-image: -moz-linear-gradient(top, #f3f3f3, #e2e1e1);
+      background-image: -ms-linear-gradient(top, #f3f3f3, #e2e1e1);
+      background-image: -o-linear-gradient(top, #f3f3f3, #e2e1e1);
+      background-image: linear-gradient(to bottom, #f3f3f3, #e2e1e1);
+      text-decoration: none;
+    }
+
+    input[type=text] {
+      -webkit-box-shadow: rgba(29, 36, 23, 0.386719) -2px 3px 4px 0px;
+      -moz-box-shadow: rgba(29, 36, 23, 0.386719) -2px 3px 4px 0px;
+      box-shadow: rgba(29, 36, 23, 0.386719) -2px 3px 4px 0px;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      border-radius: 4px;
+      border: 0;
+      margin: 0 1em;
+      padding: 0.1em 0.4em;
+      font-size: 20px;
+    }
+
+    input[type=text] {
+      background-color: rgb(250, 250, 250);
+    }
+
+    .src li {
+      font-size:9pt;
+    }
+
+    dt {
+      font-size: 13pt;
+    }
+
+    hr {
+      border: 1px dotted lightgray;
+    }
+
+    .part {
+      display: block;
+      border-left: 7px solid rgb(233, 233, 233);
+      margin: 1em 0;
+      padding: .5em 1.5em;
+      background-color: #f7f5f5;
+    }
+
+    a,
+    a:link,
+    a:visited {
+      cursor: pointer;
+      color: rgb(158, 176, 187);
+      text-decoration: none !important;
+      -webkit-transition: color 1s ease, background-color 1s ease;
+      -moz-transition: color 1s ease, background-color 1s ease;
+      -o-transition: color 1s ease, background-color 1s ease;
+      transition: color 1s ease, background-color 1s ease;
+    }
+
+    a:hover {
+      color: #86b692;
+      background-color: #daffcf;
+    }
+
+    .example {
+      list-style-type: "\1F4A1";
+      padding-left: .7em;
+    }
+
+    .syn li {
+      list-style-type: "\223C";
+      padding-left: .7em;
+    }
+
+    .ant li {
+      list-style-type: "\2260";
+      padding-left: .7em;
+    }
+
+    @media all and (min-width: 1024px) {
+      .container {
+        padding-left: 150px;
+        width: 650px;
+      }
+
+      #page {
+        width: 950px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+
+    <form name="frm" action="#" onsubmit="doSearch(event);">
+      <label for="term"></label>
+      <input type="text" name="term" id="terms" autofocus>
+      <input type="submit" name="search" id="search" class="btn" value="🔎 ">
+    </form>
+    <div id="main"></div>
+  </div>
+
+  <script type="text/javascript">
+
+    var params = new URLSearchParams(window.location.search);
+    window.searchTerm = params.get('term');
+    if (searchTerm) {
+      document.forms.frm.term.value = searchTerm;
+      doSearch(null);
+    }
+
+    function doSearch(evt) {
+      evt && evt.preventDefault();
+      var term = document.forms.frm.term.value;
+
+      if (term) {
+        var url = new URL(document.location.href);
+        url.searchParams.set('term', term);
+
+        window.history.replaceState(null, term, url.toString())
+        fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${term}`)
+          .then(resp => resp.json())
+          .then(data => {
+            console.log(data);
+            renderTerm(data);
+          });
+      }
+    }
+
+    function renderTerm(object) {
+      var html = Mustache.render(`
+      {{#title}}
+        <h1>{{title}}</h1>
+      {{/title}}
+      {{#message}}
+        {{message}}
+      {{/message}}
+      {{#resolution}}
+        {{resolution}}
+      {{/resolution}}
+      {{#.}}
+        <h1>{{word}}</h1>
+      
+        {{#phonetics}}
+        <h3>{{phonetic}}
+          {{#audio}}
+          <a onclick="this.firstChild.play()"><audio src="{{audio}}"></audio>🔈</a> <a target="_blank" href="{{sourceUrl}}">📗</a>
+          {{/audio}}
+        </h3>
+        {{/phonetics}}
+        
+        {{#meanings}}
+          <div>
+          <i class="part">{{partOfSpeech}}</i>
+          <dl>
+              {{#definitions}}
+                  <dt>{{definition}}</dt>
+                  <dd>
+                    {{#example}}
+                    <ul class="ex_list">
+                      <li class="example">
+                        {{example}}
+                      </li>
+                    </ul>
+                    {{/example}}
+                    {{#synonyms.length}}
+                        <b>Synonyms</b>
+                        <ul class="syn">
+                          {{#synonyms}}
+                            <li>
+                              <a href="?term={{.}}">
+                                  {{.}}
+                                </a>
+                            </li>
+                          {{/synonyms}}
+                        </ul>
+                      {{/synonyms.length}}
+                      {{#antonyms.length}}
+                        <b>Antonyms</b>
+                        <ul class="ant">
+                        {{#antonyms}}
+                            <li>
+                              <a href="?term={{.}}">
+                                {{.}}
+                              </a>
+                            </li>
+                        {{/antonyms}}
+                        </ul>
+                      {{/antonyms.length}}
+                  </dd>
+              {{/definitions}}
+          </dl>
+          </div>
+        {{/meanings}}
+        <ul class="src">
+          {{#sourceUrls}}
+          <li><a target=_blank href="{{.}}">{{.}}</a></li>
+          {{/sourceUrls}}
+        </ul>
+      {{/.}}</ul>
+      </ul>
+      `, object);
+      document.getElementById('main').innerHTML = html;
+    }
+  </script>
+</body>
+
+</html>
